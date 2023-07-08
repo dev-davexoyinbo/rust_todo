@@ -72,7 +72,7 @@ This project was developed using the following
 # API Documentation
 ## Endpoints
 
-### Endpoint 1
+### Get all todo items
 - **URL**: `/todos`
 - **Method**: `GET`
 - **Description**: Get all todo items
@@ -89,49 +89,132 @@ This project was developed using the following
   Content-Type: application/json
   
   {
-    "message": "Todos",
-    "data": {
-      "values": [
+    "from": 1,
+    "last_page": 3,
+    "per_page": 10,
+    "to": 10,
+    "total": 26,
+    "data": [
         {
             "id": 1,
             "title": "This is the title 1",
-            "body": "This is the body of the todo"
-            status varchar
-            created_at timestamp
-            updated_at timestamp
+            "body": "This is the body of the todo",
+            "status": "pending", // pending, completed,
+            "created_at": "2023-07-08 10:30 AM UTC",
+            "updated_at": "2023-07-08 10:30 AM UTC",
         },
         ...
       ]
-    }
+    ]
   }
   ```
 
-### Endpoint 2
-- **URL**: `/endpoint2`
+### Create todo item
+- **URL**: `/todos`
 - **Method**: `POST`
-- **Description**: Describe the purpose and functionality of this endpoint.
-- **Parameters**: Specify the request body parameters, their types, and whether they are required or optional.
+- **Description**: Creates the todo item
 - **Request Example**:
-  ```
-  POST /endpoint2
+  ```json
+  POST /todos
   Content-Type: application/json
 
   {
-    "param1": "value1",
-    "param2": "value2"
+    "title": "value1",
+    "body": "value2",
   }
   ```
 - **Response Example**:
-  ```
+  ```json
   HTTP/1.1 201 Created
   Content-Type: application/json
   
   {
     "message": "Resource created successfully",
     "data": {
-      "id": "12345",
-      "param1": "value1",
-      "param2": "value2"
+      "id": 3,
     }
   }
   ```
+
+### Get single todo item
+- **URL**: `/todos/:id`
+- **Method**: `GET`
+- **Description**: Get all todo items
+- **Request Example**:
+  ```bash
+  GET /todos/:id
+  ```
+- **Response Example**:
+```json
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  
+    {
+        "message": "Fetched todo item",
+        "data": {
+            "id": 1,
+            "title": "This is the title 1",
+            "body": "This is the body of the todo",
+            "status": "pending", // pending, completed,
+            "created_at": "2023-07-08 10:30 AM UTC",
+            "updated_at": "2023-07-08 10:30 AM UTC",
+        },
+    }
+```
+
+### Delete single todo item
+- **URL**: `/todos/:id`
+- **Method**: `DELETE`
+- **Description**: Delete all todo items
+- **Request Example**:
+  ```bash
+  DELETE /todos/:id
+  ```
+- **Response Example**:
+```json
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  
+    {
+        "message": "Deleted successfully",
+        "data": {
+            "id": 1,
+        },
+    }
+```
+
+
+### Update single todo item
+- **URL**: `/todos/:id`
+- **Method**: `PUT`
+- **Description**: Get all todo items
+- **Request Example**:
+  ```json
+  PUT /todos/:id
+  Content-Type: application/json
+
+    {
+        "title": "This is the title 1",
+        "body": "This is the body of the todo",
+        "status": "pending", // pending, completed,
+        "created_at": "2023-07-08 10:30 AM UTC",
+        "updated_at": "2023-07-08 10:30 AM UTC",
+    }
+  ```
+- **Response Example**:
+```json
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  
+    {
+        "message": "Fetched todo item",
+        "data": {
+            "id": 1,
+            "title": "This is the title 1",
+            "body": "This is the body of the todo",
+            "status": "pending", // pending, completed,
+            "created_at": "2023-07-08 10:30 AM UTC",
+            "updated_at": "2023-07-08 10:30 AM UTC",
+        },
+    }
+```
