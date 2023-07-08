@@ -15,7 +15,13 @@ This is a simple todo API written in rust.
 
 ## Features
 
-TODO::
+| TASKS | STATUS |
+|-------|--------|
+| Create database models | :construction: In progress |
+| Define endpoints | :grey_exclamation: Not Started |
+| Create tests for endpoints | :grey_exclamation: Not Started |
+| Implement endpoints | :grey_exclamation: Not Started |
+
 
 ## Installation
 
