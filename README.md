@@ -10,6 +10,7 @@ This is a simple todo API written in rust.
 - [Installation](#installation)
 - [Tests](#tests)
 - [Running the project](#running-the-project)
+- [Database model diagram](#database-model-diagram)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -38,6 +39,10 @@ cargo test
 ```bash
 cargo run
 ```
+
+## Database model diagram
+<img width="423" alt="image" src="https://github.com/dev-davexoyinbo/rust_todo/assets/67616046/fc5f3b93-7bdc-4c1a-9bee-2ec2be04d8fe">
+
 
 
 ## License
