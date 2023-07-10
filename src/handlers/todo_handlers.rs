@@ -1,4 +1,4 @@
-use actix_web::{get, web, HttpResponse, Responder, Scope, delete, put};
+use actix_web::{get, web, HttpResponse, Responder, Scope, delete, put, post};
 
 pub fn handler_service_scope() -> Scope {
     return web::scope("/todos").service(get_all);
@@ -6,6 +6,11 @@ pub fn handler_service_scope() -> Scope {
 
 #[get("")]
 async fn get_all() -> impl Responder {
+    HttpResponse::InternalServerError().finish()
+}
+
+#[post("")]
+async fn create_todo_item() -> impl Responder {
     HttpResponse::InternalServerError().finish()
 }
 

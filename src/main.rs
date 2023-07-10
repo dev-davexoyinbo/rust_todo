@@ -1,4 +1,4 @@
-use actix_web::{App, HttpServer, web};
+use actix_web::{App, HttpServer};
 use todo_rust::startup;
 
 
