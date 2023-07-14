@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(Deserialize, Debug, Serialize, Clone)]
 pub enum TodoStatus {
     PENDING,
     COMPLETED
@@ -18,10 +18,12 @@ impl TryFrom<String> for TodoStatus {
 }
 
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct TodoItem {
     pub id: u32,
     pub title: Option<String>,
     pub body: String,
     pub status: TodoStatus,
+    pub created_at: String,
+    pub updated_at: String,
 }
