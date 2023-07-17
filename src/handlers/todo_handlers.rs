@@ -1,11 +1,37 @@
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder, Scope};
+use chrono::Utc;
+use serde::{Deserialize, Serialize};
 
 use crate::models::{
     dto_data::ResponseDTO,
     paginated_data::{PaginatedData, PaginationQuery},
     todo_app_state::TodoAppState,
-    todo_item::TodoItem,
+    todo_item::{TodoItem, TodoStatus},
 };
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct CreateTodoItemDTO {
+    pub title: Option<String>,
+    pub body: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct CreateTodoItemResponseDTO {
+    pub id: u32,
+}
+
+impl CreateTodoItemDTO {
+    fn create_todo_item_with_id(self, id: u32) -> TodoItem {
+        return TodoItem {
+            id,
+            title: self.title,
+            body: self.body,
+            status: TodoStatus::PENDING,
+            created_at: Utc::now().to_string(),
+            updated_at: Utc::now().to_string(),
+        };
+    }
+}
 
 pub fn handler_service_scope() -> Scope {
     return web::scope("/api/todos")
@@ -31,8 +57,20 @@ async fn get_all(
 } // end method get_all
 
 #[post("")]
-async fn create_todo_item() -> impl Responder {
-    HttpResponse::InternalServerError().finish()
+async fn create_todo_item(data: web::Json<CreateTodoItemDTO>, todo_app_state: web::Data<TodoAppState>) -> impl Responder {
+    let max_id = todo_app_state.get_max_id();
+    let new_id = match max_id {
+        Some(id) => id + 1,
+        None => 1,
+    };
+    let todo_item = data.into_inner().create_todo_item_with_id(new_id as u32);
+    todo_app_state.push(todo_item);
+
+    return HttpResponse::Created().json(ResponseDTO::new(
+        CreateTodoItemResponseDTO {
+            id: new_id as u32,
+        }
+    ));
 }
 
 #[get("/{id}")]
@@ -44,9 +82,8 @@ async fn get_single_todo(
     let todo_map = todo_app_data.map.read().unwrap();
     return match todo_map.get(&id) {
         Some(todo) => HttpResponse::Ok().json(ResponseDTO::new(todo)),
-        None => HttpResponse::NotFound().json(
-            ResponseDTO::new("Todo item not found.").message("Todo item not found."),
-        ),
+        None => HttpResponse::NotFound()
+            .json(ResponseDTO::new("Todo item not found.").message("Todo item not found.")),
     };
 }
 

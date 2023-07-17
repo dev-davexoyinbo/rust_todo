@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, RwLock},
-};
+use std::collections::HashMap;
 
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use chrono::Utc;
@@ -24,9 +21,10 @@ async fn main() -> std::io::Result<()> {
         updated_at: Utc::now().to_string(),
     };
 
-    let todo_app_data = web::Data::new(TodoAppState {
-        map: Arc::new(RwLock::new(HashMap::from([(todo.id as usize, todo)]))),
-    });
+    let todo_app_data = web::Data::new(TodoAppState::from_hash_map(HashMap::from([(
+        todo.id as usize,
+        todo,
+    )])));
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 

@@ -6,24 +6,23 @@ use std::{
 use actix_web::{test, web, App};
 use chrono::Utc;
 use todo_rust::models::{
+    dto_data::ResponseDTO,
     todo_app_state::TodoAppState,
-    todo_item::{TodoItem, TodoStatus}, dto_data::ResponseDTO,
+    todo_item::{TodoItem, TodoStatus},
 };
 
 fn get_todo_app_data() -> web::Data<TodoAppState> {
-    return web::Data::new(TodoAppState {
-        map: Arc::new(RwLock::new(HashMap::from([(
-            1,
-            TodoItem {
-                id: 1,
-                title: Some(String::from("Title")),
-                body: "This is the body".to_string(),
-                status: TodoStatus::COMPLETED,
-                created_at: Utc::now().to_string(),
-                updated_at: Utc::now().to_string(),
-            },
-        )]))),
-    });
+    return web::Data::new(TodoAppState::from_hash_map(HashMap::from([(
+        1,
+        TodoItem {
+            id: 1,
+            title: Some(String::from("Title")),
+            body: "This is the body".to_string(),
+            status: TodoStatus::COMPLETED,
+            created_at: Utc::now().to_string(),
+            updated_at: Utc::now().to_string(),
+        },
+    )])));
 }
 
 #[test]
