@@ -1,13 +1,13 @@
 use std::{
     collections::HashMap,
-    sync::{Arc, Mutex, RwLock},
+    sync::{Arc, RwLock},
 };
 
 use actix_web::{test, web, App};
 use chrono::Utc;
 use todo_rust::models::{
     todo_app_state::TodoAppState,
-    todo_item::{TodoItem, TodoStatus},
+    todo_item::{TodoItem, TodoStatus}, dto_data::ResponseDTO,
 };
 
 fn get_todo_app_data() -> web::Data<TodoAppState> {
@@ -51,7 +51,7 @@ async fn get_single_todo_test() {
     )
     .await;
     let req = test::TestRequest::get().uri("/api/todos/1").to_request();
-    let todo: TodoItem = test::call_and_read_body_json(&app, req).await;
+    let todo: ResponseDTO<TodoItem> = test::call_and_read_body_json(&app, req).await;
 
     assert!(todo.id > 0);
 } //end function healthcheck_test
