@@ -1,6 +1,8 @@
-use actix_web::{web, Responder};
+use actix_web::{Responder, HttpResponse};
 use chrono::Utc;
 use serde::Serialize;
+
+use crate::models::dto_data::ResponseDTO;
 
 #[derive(Debug, Serialize)]
 struct HealthCheckDTO {
@@ -13,5 +15,5 @@ pub async fn health_check() -> impl Responder {
         time: Utc::now().to_string(),
     };
 
-    web::Json(data)
+    return HttpResponse::Ok().json(ResponseDTO::new(data));
 }
