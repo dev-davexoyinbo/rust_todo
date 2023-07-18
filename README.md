@@ -8,6 +8,7 @@ This is a simple todo API written in rust.
 ## Table of Contents
 - [Features](#features)
 - [API Documentation](#api-documentation)
+- [Running with docker](#running-with-docker)
 - [Installation](#installation)
 - [Tests](#tests)
 - [Running the project](#running-the-project)
@@ -29,6 +30,12 @@ This is a simple todo API written in rust.
 This is the api [docs](https://documenter.getpostman.com/view/11745402/2s946h9t2p)
 
 ---
+
+## Running with docker
+If you have docker installed you can run
+```bash
+docker compose up
+```
 
 ## Installation
 
