@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use actix_web::{http::StatusCode, test, web, App};
 use chrono::Utc;
 use todo_rust::{
-    handlers::todo_handlers::{CreateTodoItemDTO, CreateTodoItemResponseDTO},
+    handlers::todo_handlers::{CreateTodoItemDTO, CreateTodoItemResponseDTO, DeleteTodoItemResponseDTO},
     models::{
         dto_data::ResponseDTO,
         todo_app_state::TodoAppState,
@@ -67,14 +67,33 @@ async fn update_todo_test() {
 
 #[test]
 async fn delete_todo_test() {
-    let app =
-        test::init_service(App::new().configure(todo_rust::startup::startup_app_config)).await;
-    let req = test::TestRequest::delete().uri("/api/todos/1").to_request();
-    let resp = test::call_service(&app, req).await;
+    let app = test::init_service(
+        App::new()
+            .app_data(get_todo_app_data())
+            .configure(todo_rust::startup::startup_app_config),
+    )
+    .await;
 
-    assert!(resp.status().is_success());
+    // Create todo
+    let payload = CreateTodoItemDTO {
+        title: Some(String::from("Test title")),
+        body: String::from("This is the body"),
+    };
+    let req = test::TestRequest::post()
+        .set_json(payload)
+        .uri("/api/todos")
+        .to_request();
+    let resp: ResponseDTO<CreateTodoItemResponseDTO> =
+        test::call_and_read_body_json(&app, req).await;
 
-    let req = test::TestRequest::get().uri("/api/todos/1").to_request();
+    let created_id = resp.id;
+
+    
+    let req = test::TestRequest::delete().uri(format!("/api/todos/{}", created_id).as_str()).to_request();
+    let resp: ResponseDTO<DeleteTodoItemResponseDTO> = test::call_and_read_body_json(&app, req).await;
+    assert_eq!(resp.id, created_id);
+
+    let req = test::TestRequest::get().uri(format!("/api/todos/{}", created_id).as_str()).to_request();
     let resp = test::call_service(&app, req).await;
     assert_eq!(resp.status(), StatusCode::NOT_FOUND);
 } //end function healthcheck_test
