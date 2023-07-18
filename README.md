@@ -19,10 +19,10 @@ This is a simple todo API written in rust.
 
 | TASKS | STATUS |
 |-------|--------|
-| Create database models | :white_check_mark: In progress |
-| Define endpoints | :white_check_mark: Not Started |
-| Create tests for endpoints | :white_check_mark: Not Started |
-| Implement endpoints | :white_check_mark: Not Started |
+| Create database models | :white_check_mark: Completed |
+| Define endpoints | :white_check_mark: Completed |
+| Create tests for endpoints | :white_check_mark: Completed |
+| Implement endpoints | :white_check_mark: Completed |
 
 ---
 ## API Documentation
