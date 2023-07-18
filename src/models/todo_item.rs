@@ -1,9 +1,11 @@
+use core::fmt;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub enum TodoStatus {
     PENDING,
-    COMPLETED
+    COMPLETED,
 }
 
 impl TryFrom<String> for TodoStatus {
@@ -12,11 +14,42 @@ impl TryFrom<String> for TodoStatus {
         match value.to_lowercase().as_str() {
             "pending" => Ok(Self::PENDING),
             "completed" => Ok(Self::COMPLETED),
-            _ => Err(format!("TodoStatus doesn't have a value that matches '{}'", value))
+            _ => Err(format!(
+                "TodoStatus doesn't have a value that matches '{}'",
+                value
+            )),
         }
     }
 }
 
+// impl TryInto<String> for TodoStatus {
+//     type Error = String;
+//     fn try_into(self) -> Result<String, Self::Error> {
+//         match self {
+//             Self::PENDING => Ok("pending".to_string()),
+//             Self::COMPLETED => Ok("completed".to_string()),
+//         }
+//     }
+// }
+
+impl fmt::Display for TodoStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::COMPLETED => "completed",
+                Self::PENDING => "pending",
+            }
+        )
+    }
+}
+
+impl PartialEq for TodoStatus {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_string() == other.to_string()
+    }
+}
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct TodoItem {

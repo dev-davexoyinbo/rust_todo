@@ -1,11 +1,11 @@
-use actix_web::{delete, get, post, put, web, HttpResponse, Responder, Scope};
+use actix_web::{delete, get, post, put, web, HttpResponse, Responder, Scope, patch};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{
     dto_data::ResponseDTO,
     paginated_data::{PaginatedData, PaginationQuery},
-    todo_app_state::TodoAppState,
+    todo_app_state::{TodoAppState, self},
     todo_item::{TodoItem, TodoStatus},
 };
 
@@ -14,17 +14,6 @@ pub struct CreateTodoItemDTO {
     pub title: Option<String>,
     pub body: String,
 }
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct CreateTodoItemResponseDTO {
-    pub id: u32,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct DeleteTodoItemResponseDTO {
-    pub id: u32,
-}
-
 impl CreateTodoItemDTO {
     fn create_todo_item_with_id(self, id: u32) -> TodoItem {
         return TodoItem {
@@ -37,6 +26,24 @@ impl CreateTodoItemDTO {
         };
     }
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct UpdateTodoItemDTO {
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub status: Option<TodoStatus>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct CreateTodoItemResponseDTO {
+    pub id: u32,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DeleteTodoItemResponseDTO {
+    pub id: u32,
+}
+
 
 pub fn handler_service_scope() -> Scope {
     return web::scope("/api/todos")
@@ -108,7 +115,7 @@ async fn delete_single_todo(
     }
 }
 
-#[put("{id}")]
-async fn update_single_todo() -> impl Responder {
+#[patch("{id}")]
+async fn update_single_todo(path: web::Path<usize>, todo_app_state: web::Data<TodoAppState>) -> impl Responder {
     HttpResponse::InternalServerError().finish()
 }

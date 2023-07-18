@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 
-use actix_web::{http::StatusCode, test, web, App};
+use actix_web::{dev::Response, http::StatusCode, test, web, App};
 use chrono::Utc;
 use todo_rust::{
-    handlers::todo_handlers::{CreateTodoItemDTO, CreateTodoItemResponseDTO, DeleteTodoItemResponseDTO},
+    handlers::todo_handlers::{
+        CreateTodoItemDTO, CreateTodoItemResponseDTO, DeleteTodoItemResponseDTO, UpdateTodoItemDTO,
+    },
     models::{
         dto_data::ResponseDTO,
         todo_app_state::TodoAppState,
@@ -57,12 +59,29 @@ async fn get_single_todo_test() {
 
 #[test]
 async fn update_todo_test() {
-    let app =
-        test::init_service(App::new().configure(todo_rust::startup::startup_app_config)).await;
-    let req = test::TestRequest::put().uri("/api/todos/1").to_request();
-    let resp = test::call_service(&app, req).await;
+    let app = test::init_service(
+        App::new()
+            .app_data(get_todo_app_data())
+            .configure(todo_rust::startup::startup_app_config),
+    )
+    .await;
 
-    assert!(resp.status().is_success());
+    // With all values
+    let update = UpdateTodoItemDTO {
+        body: Some(String::from("New body")),
+        title: Some(String::from("New title")),
+        status: Some(TodoStatus::COMPLETED),
+    };
+
+    let req = test::TestRequest::patch()
+        .uri("/api/todos/1")
+        .set_json(update.clone())
+        .to_request();
+    let todo: ResponseDTO<TodoItem> = test::call_and_read_body_json(&app, req).await;
+
+    assert_eq!(update.body.unwrap(), todo.body);
+    assert_eq!(update.title, todo.title);
+    assert_eq!(update.status.unwrap(), todo.status);
 } //end function healthcheck_test
 
 #[test]
@@ -88,12 +107,16 @@ async fn delete_todo_test() {
 
     let created_id = resp.id;
 
-    
-    let req = test::TestRequest::delete().uri(format!("/api/todos/{}", created_id).as_str()).to_request();
-    let resp: ResponseDTO<DeleteTodoItemResponseDTO> = test::call_and_read_body_json(&app, req).await;
+    let req = test::TestRequest::delete()
+        .uri(format!("/api/todos/{}", created_id).as_str())
+        .to_request();
+    let resp: ResponseDTO<DeleteTodoItemResponseDTO> =
+        test::call_and_read_body_json(&app, req).await;
     assert_eq!(resp.id, created_id);
 
-    let req = test::TestRequest::get().uri(format!("/api/todos/{}", created_id).as_str()).to_request();
+    let req = test::TestRequest::get()
+        .uri(format!("/api/todos/{}", created_id).as_str())
+        .to_request();
     let resp = test::call_service(&app, req).await;
     assert_eq!(resp.status(), StatusCode::NOT_FOUND);
 } //end function healthcheck_test
