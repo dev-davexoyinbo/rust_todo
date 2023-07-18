@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use actix_web::{dev::Response, http::StatusCode, test, web, App};
+use actix_web::{http::StatusCode, test, web, App};
 use chrono::Utc;
 use todo_rust::{
     handlers::todo_handlers::{
@@ -77,6 +77,11 @@ async fn update_todo_test() {
         .uri("/api/todos/1")
         .set_json(update.clone())
         .to_request();
+    let resp = test::call_service(&app, req).await;
+
+    assert!(resp.status().is_success());
+
+    let req = test::TestRequest::get().uri("/api/todos/1").to_request();
     let todo: ResponseDTO<TodoItem> = test::call_and_read_body_json(&app, req).await;
 
     assert_eq!(update.body.unwrap(), todo.body);

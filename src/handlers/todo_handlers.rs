@@ -1,11 +1,11 @@
-use actix_web::{delete, get, post, put, web, HttpResponse, Responder, Scope, patch};
+use actix_web::{delete, get, patch, post, web, HttpResponse, Responder, Scope};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{
     dto_data::ResponseDTO,
     paginated_data::{PaginatedData, PaginationQuery},
-    todo_app_state::{TodoAppState, self},
+    todo_app_state::TodoAppState,
     todo_item::{TodoItem, TodoStatus},
 };
 
@@ -35,6 +35,11 @@ pub struct UpdateTodoItemDTO {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct UpdateTodoItemResponseDTO {
+    pub id: u32,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CreateTodoItemResponseDTO {
     pub id: u32,
 }
@@ -43,7 +48,6 @@ pub struct CreateTodoItemResponseDTO {
 pub struct DeleteTodoItemResponseDTO {
     pub id: u32,
 }
-
 
 pub fn handler_service_scope() -> Scope {
     return web::scope("/api/todos")
@@ -116,6 +120,26 @@ async fn delete_single_todo(
 }
 
 #[patch("{id}")]
-async fn update_single_todo(path: web::Path<usize>, todo_app_state: web::Data<TodoAppState>) -> impl Responder {
-    HttpResponse::InternalServerError().finish()
+async fn update_single_todo(
+    path: web::Path<usize>,
+    todo_app_state: web::Data<TodoAppState>,
+    data: web::Json<UpdateTodoItemDTO>
+) -> impl Responder {
+    let id = path.into_inner();
+    let mut todo_map = todo_app_state.map.write().unwrap();
+    let todo_item = todo_map.get_mut(&id);
+    let data = data.into_inner();
+
+    match todo_item {
+        Some(todo_item) => {
+            todo_item.body = data.body.unwrap_or(todo_item.body.clone());
+            todo_item.title = data.title.or(todo_item.title.clone());
+            todo_item.status = data.status.unwrap_or(todo_item.status.clone());
+
+            HttpResponse::Ok().json(ResponseDTO::new(CreateTodoItemResponseDTO {
+                id: todo_item.id
+            }))
+        }
+        None => HttpResponse::NotFound().json(ResponseDTO::new("Todo item not found").message("Todo item not found"))
+    }
 }
