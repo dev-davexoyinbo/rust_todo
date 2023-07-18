@@ -20,6 +20,11 @@ pub struct CreateTodoItemResponseDTO {
     pub id: u32,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DeleteTodoItemResponseDTO {
+    pub id: u32,
+}
+
 impl CreateTodoItemDTO {
     fn create_todo_item_with_id(self, id: u32) -> TodoItem {
         return TodoItem {
@@ -57,7 +62,10 @@ async fn get_all(
 } // end method get_all
 
 #[post("")]
-async fn create_todo_item(data: web::Json<CreateTodoItemDTO>, todo_app_state: web::Data<TodoAppState>) -> impl Responder {
+async fn create_todo_item(
+    data: web::Json<CreateTodoItemDTO>,
+    todo_app_state: web::Data<TodoAppState>,
+) -> impl Responder {
     let max_id = todo_app_state.get_max_id();
     let new_id = match max_id {
         Some(id) => id + 1,
@@ -66,11 +74,9 @@ async fn create_todo_item(data: web::Json<CreateTodoItemDTO>, todo_app_state: we
     let todo_item = data.into_inner().create_todo_item_with_id(new_id as u32);
     todo_app_state.push(todo_item);
 
-    return HttpResponse::Created().json(ResponseDTO::new(
-        CreateTodoItemResponseDTO {
-            id: new_id as u32,
-        }
-    ));
+    return HttpResponse::Created().json(ResponseDTO::new(CreateTodoItemResponseDTO {
+        id: new_id as u32,
+    }));
 }
 
 #[get("/{id}")]
@@ -88,8 +94,18 @@ async fn get_single_todo(
 }
 
 #[delete("{id}")]
-async fn delete_single_todo() -> impl Responder {
-    HttpResponse::InternalServerError().finish()
+async fn delete_single_todo(
+    path: web::Path<usize>,
+    todo_app_state: web::Data<TodoAppState>,
+) -> impl Responder {
+    let id = path.into_inner();
+    match todo_app_state.delete_todo_with_id(id) {
+        Some(todo_item) => HttpResponse::Ok().json(ResponseDTO::new(DeleteTodoItemResponseDTO {
+            id: todo_item.id as u32,
+        })),
+        None => HttpResponse::NotFound()
+            .json(ResponseDTO::new("Todo item not found").message("Todo item not found")),
+    }
 }
 
 #[put("{id}")]

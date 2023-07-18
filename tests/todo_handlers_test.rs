@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use actix_web::{test, web, App, http::StatusCode};
+use actix_web::{http::StatusCode, test, web, App};
 use chrono::Utc;
 use todo_rust::{
     handlers::todo_handlers::{CreateTodoItemDTO, CreateTodoItemResponseDTO},

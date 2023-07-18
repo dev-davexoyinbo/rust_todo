@@ -38,4 +38,19 @@ impl TodoAppState {
             *max_id = todo_map.keys().max().copied();
         }
     }
+
+    // fn recalculate_max_id(&self) {
+    //     let todo_map = self.map.read().unwrap();
+    //     let mut max_id = self.max_id.write().unwrap();
+    //     *max_id = todo_map.keys().max().copied();
+    // }
+
+    pub fn delete_todo_with_id(&self, id: usize) -> Option<TodoItem> {
+        let mut todo_map = self.map.write().unwrap();
+        let rv = todo_map.remove(&id);
+        let mut max_id = self.max_id.write().unwrap();
+        *max_id = todo_map.keys().max().copied();
+
+        return rv;
+    } //end method delete_todo_with_id
 }
