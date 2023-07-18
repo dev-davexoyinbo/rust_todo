@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use actix_web::{test, web, App};
+use actix_web::{test, web, App, http::StatusCode};
 use chrono::Utc;
 use todo_rust::{
     handlers::todo_handlers::{CreateTodoItemDTO, CreateTodoItemResponseDTO},
@@ -73,6 +73,10 @@ async fn delete_todo_test() {
     let resp = test::call_service(&app, req).await;
 
     assert!(resp.status().is_success());
+
+    let req = test::TestRequest::get().uri("/api/todos/1").to_request();
+    let resp = test::call_service(&app, req).await;
+    assert_eq!(resp.status(), StatusCode::NOT_FOUND);
 } //end function healthcheck_test
 
 #[test]
