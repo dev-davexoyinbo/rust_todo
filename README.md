@@ -7,6 +7,7 @@ This is a simple todo API written in rust.
 
 ## Table of Contents
 - [Features](#features)
+- [API Documentation](#api-documentation)
 - [Installation](#installation)
 - [Tests](#tests)
 - [Running the project](#running-the-project)
@@ -18,11 +19,16 @@ This is a simple todo API written in rust.
 
 | TASKS | STATUS |
 |-------|--------|
-| Create database models | :construction: In progress |
-| Define endpoints | :grey_exclamation: Not Started |
-| Create tests for endpoints | :grey_exclamation: Not Started |
-| Implement endpoints | :grey_exclamation: Not Started |
+| Create database models | :white_check_mark: In progress |
+| Define endpoints | :white_check_mark: Not Started |
+| Create tests for endpoints | :white_check_mark: Not Started |
+| Implement endpoints | :white_check_mark: Not Started |
 
+---
+## API Documentation
+This is the api [docs](https://documenter.getpostman.com/view/11745402/2s946h9t2p)
+
+---
 
 ## Installation
 
@@ -55,166 +61,3 @@ This project is licensed under the [MIT License](LICENSE.md).
 This project was developed using the following
 - Rust programming language
 - Actix web framework
-
-
-
-
-<br />
-<br />
-<br />
-<br />
-<br />
-
-
-
-
-
-# API Documentation
-## Endpoints
-
-### Get all todo items
-- **URL**: `/todos`
-- **Method**: `GET`
-- **Description**: Get all todo items
-- **Parameters**: 
-    - page: Defines the current page (default: 1)
-    - per_page: Defines the number of todos per page (default: 20)
-- **Request Example**:
-  ```bash
-  GET /todos?page=2&per_page=20
-  ```
-- **Response Example**:
-  ```json
-  HTTP/1.1 200 OK
-  Content-Type: application/json
-  
-  {
-    "from": 1,
-    "last_page": 3,
-    "per_page": 10,
-    "to": 10,
-    "total": 26,
-    "data": [
-        {
-            "id": 1,
-            "title": "This is the title 1",
-            "body": "This is the body of the todo",
-            "status": "pending", // pending, completed,
-            "created_at": "2023-07-08 10:30 AM UTC",
-            "updated_at": "2023-07-08 10:30 AM UTC",
-        },
-        ...
-      ]
-    ]
-  }
-  ```
-
-### Create todo item
-- **URL**: `/todos`
-- **Method**: `POST`
-- **Description**: Creates the todo item
-- **Request Example**:
-  ```json
-  POST /todos
-  Content-Type: application/json
-
-  {
-    "title": "value1",
-    "body": "value2",
-  }
-  ```
-- **Response Example**:
-  ```json
-  HTTP/1.1 201 Created
-  Content-Type: application/json
-  
-  {
-    "message": "Resource created successfully",
-    "data": {
-      "id": 3,
-    }
-  }
-  ```
-
-### Get single todo item
-- **URL**: `/todos/:id`
-- **Method**: `GET`
-- **Description**: Get all todo items
-- **Request Example**:
-  ```bash
-  GET /todos/:id
-  ```
-- **Response Example**:
-```json
-  HTTP/1.1 200 OK
-  Content-Type: application/json
-  
-    {
-        "message": "Fetched todo item",
-        "data": {
-            "id": 1,
-            "title": "This is the title 1",
-            "body": "This is the body of the todo",
-            "status": "pending", // pending, completed,
-            "created_at": "2023-07-08 10:30 AM UTC",
-            "updated_at": "2023-07-08 10:30 AM UTC",
-        },
-    }
-```
-
-### Delete single todo item
-- **URL**: `/todos/:id`
-- **Method**: `DELETE`
-- **Description**: Delete all todo items
-- **Request Example**:
-  ```bash
-  DELETE /todos/:id
-  ```
-- **Response Example**:
-```json
-  HTTP/1.1 200 OK
-  Content-Type: application/json
-  
-    {
-        "message": "Deleted successfully",
-        "data": {
-            "id": 1,
-        },
-    }
-```
-
-
-### Update single todo item
-- **URL**: `/todos/:id`
-- **Method**: `PUT`
-- **Description**: Get all todo items
-- **Request Example**:
-  ```json
-  PUT /todos/:id
-  Content-Type: application/json
-
-    {
-        "title": "This is the title 1",
-        "body": "This is the body of the todo",
-        "status": "pending", // pending, completed,
-        "created_at": "2023-07-08 10:30 AM UTC",
-        "updated_at": "2023-07-08 10:30 AM UTC",
-    }
-  ```
-- **Response Example**:
-```json
-  HTTP/1.1 200 OK
-  Content-Type: application/json
-  
-    {
-        "message": "Fetched todo item",
-        "data": {
-            "id": 1,
-            "title": "This is the title 1",
-            "body": "This is the body of the todo",
-            "status": "pending", // pending, completed,
-            "created_at": "2023-07-08 10:30 AM UTC",
-            "updated_at": "2023-07-08 10:30 AM UTC",
-        },
-    }
-```
